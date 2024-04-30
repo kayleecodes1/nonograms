@@ -1,7 +1,7 @@
 enum GameStateEvent {
     FILL = "fill",
     ERROR = "error",
-    ROW_COMPLETE = "rowcomplete"
+    ROW_COMPLETE = "rowComplete"
 }
 
 type FillEventCallback = (x: number, y: number) => void;

@@ -56,19 +56,23 @@ export class Puzzle {
         const solution = cells.map((cell) => cell.Solution === Cell.Solution.Filled);
         const label = countAdjacent(solution).map((count) => ({
             count,
-            solved: false,
+            isSolved: false,
         }));
 
         let currentIndex = 0;
         let currentCount = 0;
         let i = 0;
         for (i; i < cells.length; i++) {
-            if (cells[i].IsEmpty || !cells[i].IsCorrect) {
+            const cell = cells[i];
+            if (cell.IsEmpty || !cell.IsCorrect) {
                 break;
+            }
+            if (cell.Solution === Cell.Solution.Flagged) {
+                continue;
             }
             currentCount++;
             if (currentCount === label[currentIndex].count) {
-                label[currentIndex].solved = true;
+                label[currentIndex].isSolved = true;
                 currentIndex++;
                 currentCount = 0;
             }
@@ -78,12 +82,16 @@ export class Puzzle {
         currentCount = 0;
         // TODO this code is duplicated from above, abstract this
         for (let j = cells.length - 1; j > i; j--) {
-            if (cells[j].IsEmpty || !cells[j].IsCorrect) {
+            const cell = cells[j];
+            if (cell.IsEmpty || !cell.IsCorrect) {
                 break;
+            }
+            if (cell.Solution === Cell.Solution.Flagged) {
+                continue;
             }
             currentCount++;
             if (currentCount === label[currentIndex].count) {
-                label[currentIndex].solved = true;
+                label[currentIndex].isSolved = true;
                 currentIndex--;
                 currentCount = 0;
             }
@@ -107,7 +115,7 @@ export namespace Puzzle {
 
     export interface LabelItem {
         count: number;
-        solved: boolean;
+        isSolved: boolean;
     }
 
     export type Label = LabelItem[];

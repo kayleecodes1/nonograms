@@ -5,8 +5,9 @@ import {
     RowLabels,
     ColumnLabels,
     Main,
+    LabelContainer,
     Label,
-    LabelInner,
+    LabelItem,
 } from './PuzzleContainer.styles';
 
 interface PuzzleContainerProps {
@@ -24,28 +25,32 @@ const PuzzleContainer: React.FC<PuzzleContainerProps> = ({
         <Root>
             <RowLabels size={rowLabels.length}>
                 {rowLabels.map((label) => (
-                    <Label orientation="horizontal">
+                    <LabelContainer orientation="horizontal">
                         <FitText maxFontSize={12}>
-                            <LabelInner orientation="horizontal">
-                                {label.map(({ count, solved }) => (
-                                    <div>{count}</div>
+                            <Label orientation="horizontal">
+                                {label.map(({ count, isSolved }) => (
+                                    <LabelItem isSolved={isSolved}>
+                                        {count}
+                                    </LabelItem>
                                 ))}
-                            </LabelInner>
+                            </Label>
                         </FitText>
-                    </Label>
+                    </LabelContainer>
                 ))}
             </RowLabels>
             <ColumnLabels size={columnLabels.length}>
                 {columnLabels.map((label) => (
-                    <Label orientation="vertical">
+                    <LabelContainer orientation="vertical">
                         <FitText maxFontSize={12}>
-                            <LabelInner orientation="vertical">
-                                {label.map(({ count, solved }) => (
-                                    <div>{count}</div>
+                            <Label orientation="vertical">
+                                {label.map(({ count, isSolved }) => (
+                                    <LabelItem isSolved={isSolved}>
+                                        {count}
+                                    </LabelItem>
                                 ))}
-                            </LabelInner>
+                            </Label>
                         </FitText>
-                    </Label>
+                    </LabelContainer>
                 ))}
             </ColumnLabels>
             <Main>{children}</Main>

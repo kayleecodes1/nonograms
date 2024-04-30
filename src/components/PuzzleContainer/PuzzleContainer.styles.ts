@@ -31,7 +31,7 @@ export const Main = styled.div({
     display: 'flex',
 });
 
-export const Label = styled.div<{
+export const LabelContainer = styled.div<{
     orientation: Orientation;
 }>(({ orientation }) => ({
     boxSizing: 'border-box',
@@ -63,7 +63,7 @@ export const Label = styled.div<{
           }),
 }));
 
-export const LabelInner = styled.div<{
+export const Label = styled.div<{
     orientation: Orientation;
 }>(({ orientation }) => ({
     display: 'flex',
@@ -75,12 +75,16 @@ export const LabelInner = styled.div<{
               flexFlow: 'row nowrap',
               gap: 4,
               minWidth: '100%',
-              height: '100%'
+              height: '100%',
           }
         : {
               flexFlow: 'column nowrap',
               gap: 2,
               width: '100%',
-              minHeight: '100%'
+              minHeight: '100%',
           }),
+}));
+
+export const LabelItem = styled.div<{ isSolved: boolean }>(({ isSolved }) => ({
+    opacity: isSolved ? 0.5 : 1
 }));
