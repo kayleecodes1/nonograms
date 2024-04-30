@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import Cell from '@stores/Cell';
-import Grid from '@stores/Grid';
+import Cell from '@models/Cell';
+import Grid from '@models/Grid';
 import countAdjacent from '@utilities/countAdjacent';
 
 export class Puzzle {

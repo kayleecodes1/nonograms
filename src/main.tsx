@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Reset } from 'styled-reset';
 import { GameStateProvider } from '@contexts/GameStateContext';
-import GameState from '@stores/GameState';
+import GameState from '@models/GameState.ts';
 import App from './App.tsx';
 import './main.css';
 

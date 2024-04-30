@@ -1,5 +1,5 @@
 import FitText from '@components/FitText';
-import Puzzle from '@stores/Puzzle';
+import Puzzle from '@models/Puzzle';
 import {
     Root,
     RowLabels,

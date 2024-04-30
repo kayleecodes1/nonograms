@@ -2,8 +2,8 @@ import { makeAutoObservable } from 'mobx';
 import fillWav from '@assets/audio/fill.wav';
 import flagWav from '@assets/audio/flag.wav';
 import errorWav from '@assets/audio/error.wav';
-import Cell from '@stores/Cell';
-import Puzzle from '@stores/Puzzle';
+import Cell from '@models/Cell';
+import Puzzle from '@models/Puzzle';
 
 const fillAudio = new Audio(fillWav);
 const flagAudio = new Audio(flagWav);

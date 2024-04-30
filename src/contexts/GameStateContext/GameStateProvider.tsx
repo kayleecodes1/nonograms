@@ -1,4 +1,4 @@
-import type GameState from '../../stores/GameState';
+import type GameState from '../../models/GameState';
 import GameStateContext from './GameStateContext';
 
 interface GameStateProviderProps {

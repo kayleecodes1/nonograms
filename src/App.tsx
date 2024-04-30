@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import Grid from '@components/Grid';
 import PuzzleContainer from '@components/PuzzleContainer';
 import { useGameState } from '@contexts/GameStateContext';
-import Cell from '@stores/Cell';
-import { FillMode } from '@stores/GameState';
+import Cell from '@models/Cell';
+import { FillMode } from '@models/GameState';
 import {
     calculateRowLabels,
     calculateColumnLabels,

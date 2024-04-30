@@ -27,7 +27,7 @@
       "@components/*": ["components/*"],
       "@contexts/*": ["contexts/*"],
       "@hooks/*": ["hooks/*"],
-      "@stores/*": ["stores/*"],
+      "@models/*": ["models/*"],
       "@utilities/*": ["utilities/*"]
     }
   },

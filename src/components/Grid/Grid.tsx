@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useGameState } from '@contexts/GameStateContext';
-import { FillMode } from '@stores/GameState';
+import { FillMode } from '@models/GameState';
 import clamp from '@utilities/clamp';
 import range from '@utilities/range';
 import transformScreenToSvg from '@utilities/transformScreenToSvg';

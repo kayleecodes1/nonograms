@@ -1,6 +1,6 @@
 import { FillIcon, FlagIcon } from '../icons';
 import toggleWav from '@assets/audio/toggle.wav';
-import { FillMode } from '@stores/GameState';
+import { FillMode } from '@models/GameState';
 import { ToggleContainer, ToggleButton } from './FillModeToggle.styles';
 
 interface FillModeToggleProps {
