@@ -26,7 +26,6 @@ const validateSolution = (solution: boolean[][]): boolean => {
 };
 
 class GameState {
-    fillMode: FillMode;
     solution: boolean[][];
     cells: CellState[][];
 
@@ -35,7 +34,6 @@ class GameState {
             throw new Error('Invalid solution');
         }
 
-        this.fillMode = FillMode.Fill;
         this.solution = solution;
         this.cells = Array.from({ length: SIZE }, () =>
             Array.from({ length: SIZE }, () => CellState.Empty)
@@ -47,17 +45,7 @@ class GameState {
         return this.solution.length;
     }
 
-    // TODO getter for size
     // TODO getter for row and column hints
-
-    setMode(mode: FillMode) {
-        this.fillMode = mode;
-    }
-
-    toggleMode() {
-        this.fillMode =
-            this.fillMode === FillMode.Fill ? FillMode.Flag : FillMode.Fill;
-    }
 
     setCellState(x: number, y: number, state: CellState) {
         if (
