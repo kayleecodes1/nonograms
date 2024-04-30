@@ -1,72 +1,59 @@
 import { makeAutoObservable } from 'mobx';
 import fillWav from '@assets/audio/fill.wav';
 import flagWav from '@assets/audio/flag.wav';
-
-const SIZE = 10;
+import errorWav from '@assets/audio/error.wav';
+import Cell from '@stores/Cell';
+import Puzzle from '@stores/Puzzle';
 
 const fillAudio = new Audio(fillWav);
 const flagAudio = new Audio(flagWav);
+const errorAudio = new Audio(errorWav);
 
+// TODO remove
 export enum FillMode {
     Fill,
     Flag,
 }
 
-export enum CellState {
-    Empty,
-    Filled,
-    Flagged,
-}
-
-const validateSolution = (solution: boolean[][]): boolean => {
-    return (
-        [5, 10, 15].includes(solution.length) &&
-        solution.every((row) => row.length === solution.length)
-    );
-};
-
 class GameState {
-    solution: boolean[][];
-    cells: CellState[][];
+    private _puzzle: Puzzle;
 
     constructor(solution: boolean[][]) {
-        if (!validateSolution(solution)) {
-            throw new Error('Invalid solution');
-        }
+        this._puzzle = new Puzzle(solution);
 
-        this.solution = solution;
-        this.cells = Array.from({ length: SIZE }, () =>
-            Array.from({ length: SIZE }, () => CellState.Empty)
-        );
         makeAutoObservable(this);
     }
 
-    get size(): number {
-        return this.solution.length;
+    get Puzzle(): Puzzle {
+        return this._puzzle;
     }
 
-    // TODO getter for row and column hints
-
-    setCellState(x: number, y: number, state: CellState) {
-        if (
-            this.cells[y][x] !== CellState.Empty ||
-            this.cells[y][x] === state
-        ) {
+    setCellState(x: number, y: number, state: Cell.State) {
+        const cell = this._puzzle.Grid.getCell(x, y);
+        if (!cell.IsEmpty) {
             return;
         }
 
-        // Set state.
-        this.cells[y][x] = state;
+        cell.setState(state);
 
-        // TODO convert to event system
-        // Play sound effect.
-        if (state === CellState.Filled) {
-            fillAudio.currentTime = 0;
-            fillAudio.play();
+        if (cell.IsCorrect) {
+            if (state === Cell.State.Filled) {
+                fillAudio.currentTime = 0;
+                fillAudio.play();
+            } else if (state === Cell.State.Flagged) {
+                flagAudio.currentTime = 0;
+                flagAudio.play();
+            }
         } else {
-            flagAudio.currentTime = 0;
-            flagAudio.play();
+            errorAudio.currentTime = 0;
+            errorAudio.play();
         }
+
+        // TODO if a row is finished, play sound
+        //      get row and column and check if all !IsEmpty
+
+        // TODO convert audio to event system so it can be handled elsewhere
+        //      can also use error subscription to allow components to pause / cancel drag state
     }
 }
 

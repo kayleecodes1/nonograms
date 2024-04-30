@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { CellState } from '@stores/GameState';
 
 export const Root = styled.svg({
     shapeRendering: 'crispEdges',
@@ -7,22 +6,11 @@ export const Root = styled.svg({
 });
 
 export const Cell = styled.rect<{
-    cellState: CellState;
-}>(({ cellState }) => ({
-    ...{
-        [CellState.Empty]: {
-            fill: '#FFF',
-            stroke: '#BDC6D5',
-        },
-        [CellState.Filled]: {
-            fill: '#344861',
-            stroke: '#18283F',
-        },
-        [CellState.Flagged]: {
-            fill: '#FFF',
-            stroke: '#BDC6D5',
-        },
-    }[cellState],
+    isFilled: boolean;
+    isCorrect: boolean;
+}>(({ isFilled, isCorrect }) => ({
+    fill: isFilled ? (isCorrect ? '#344861' : '#F65C5C') : '#FFF',
+    stroke: isFilled ? (isCorrect ? '#18283F' : '#BA474A') : '#BDC6D5',
     strokeWidth: 2,
     strokeLinecap: 'square',
 }));

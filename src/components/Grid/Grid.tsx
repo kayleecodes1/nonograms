@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import { CellState, FillMode } from '@stores/GameState';
+import { useGameState } from '@contexts/GameStateContext';
+import { FillMode } from '@stores/GameState';
 import clamp from '@utilities/clamp';
 import range from '@utilities/range';
 import transformScreenToSvg from '@utilities/transformScreenToSvg';
-import { Root, Cell, SectionLine } from './Grid.styles';
+import { Root, Cell as CellComponent, SectionLine } from './Grid.styles';
 
 const CELL_SIZE = 48;
 
@@ -16,11 +17,12 @@ enum DragDirection {
 
 interface GridProps {
     onFill: (x: number, y: number, fillMode: FillMode) => void;
-    size: number;
-    state: CellState[][];
 }
 
-const Grid: React.FC<GridProps> = observer(({ onFill, size, state }) => {
+const Grid: React.FC<GridProps> = observer(({ onFill }) => {
+    const gameState = useGameState();
+    const size = gameState.Puzzle.Size;
+
     const dragState = useRef({
         isDragging: false,
         dragStart: { x: -1, y: -1 },
@@ -48,14 +50,16 @@ const Grid: React.FC<GridProps> = observer(({ onFill, size, state }) => {
     //    since onFill isn't memoized in parent it will just be constantly re-attaching
     const handleFill = useCallback(
         (x: number, y: number) => {
-            if (state[y][x] !== CellState.Empty) {
+            const cell = gameState.Puzzle.Grid.getCell(x, y);
+            // TODO this check is also happening in GameState
+            if (!cell.IsEmpty) {
                 return;
             }
             onFill(x, y, dragState.current.fillMode);
             dragState.current.lastFill.x = x;
             dragState.current.lastFill.y = y;
         },
-        [state, onFill]
+        [onFill]
     );
 
     const handleMouseDown = (event: React.MouseEvent) => {
@@ -168,7 +172,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill, size, state }) => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
         };
-    }, [state, handleFill]);
+    }, [handleFill]);
 
     const svgSize = CELL_SIZE * size + 4;
 
@@ -185,7 +189,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill, size, state }) => {
                 <clipPath id="cellClip">
                     <rect width={CELL_SIZE} height={CELL_SIZE} />
                 </clipPath>
-                <symbol id="flagIcon" viewBox="0 0 24 24">
+                <symbol id="flagIcon" viewBox="0 0 24 24" shapeRendering="geometricPrecision">
                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
                 </symbol>
             </defs>
@@ -193,7 +197,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill, size, state }) => {
                 {Array.from({ length: size * size }).map((_, index) => {
                     const cellX = index % size;
                     const cellY = Math.floor(index / size);
-                    const cellState = state[cellY][cellX];
+                    const cell = gameState.Puzzle.Grid.getCell(cellX, cellY);
                     return (
                         <g
                             transform={`translate(${CELL_SIZE * cellX}, ${
@@ -201,19 +205,19 @@ const Grid: React.FC<GridProps> = observer(({ onFill, size, state }) => {
                             })`}
                             clipPath="url(#cellClip)"
                         >
-                            <Cell
-                                cellState={cellState}
+                            <CellComponent
+                                isFilled={cell.IsFilled}
+                                isCorrect={cell.IsCorrect}
                                 width={CELL_SIZE}
                                 height={CELL_SIZE}
                                 overflow="hidden"
                             />
-                            {cellState === CellState.Flagged && (
+                            {cell.IsFlagged && (
                                 <use
                                     href="#flagIcon"
                                     width={CELL_SIZE}
                                     height={CELL_SIZE}
-                                    fill="#344861"
-                                    shapeRendering="geometricPrecision"
+                                    fill={cell.IsCorrect ? '#344861' : '#F65C5C'}
                                 />
                             )}
                         </g>

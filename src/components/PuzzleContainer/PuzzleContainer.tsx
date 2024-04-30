@@ -1,4 +1,5 @@
 import FitText from '@components/FitText';
+import Puzzle from '@stores/Puzzle';
 import {
     Root,
     RowLabels,
@@ -10,11 +11,9 @@ import {
 
 interface PuzzleContainerProps {
     children?: React.ReactNode;
-    columnLabels: number[][];
-    rowLabels: number[][];
+    columnLabels: Puzzle.Label[];
+    rowLabels: Puzzle.Label[];
 }
-
-const TEST_COUNT = 7;
 
 const PuzzleContainer: React.FC<PuzzleContainerProps> = ({
     children,
@@ -28,8 +27,8 @@ const PuzzleContainer: React.FC<PuzzleContainerProps> = ({
                     <Label orientation="horizontal">
                         <FitText maxFontSize={12}>
                             <LabelInner orientation="horizontal">
-                                {label.map((n) => (
-                                    <div>{n}</div>
+                                {label.map(({ count, solved }) => (
+                                    <div>{count}</div>
                                 ))}
                             </LabelInner>
                         </FitText>
@@ -41,8 +40,8 @@ const PuzzleContainer: React.FC<PuzzleContainerProps> = ({
                     <Label orientation="vertical">
                         <FitText maxFontSize={12}>
                             <LabelInner orientation="vertical">
-                                {label.map((n) => (
-                                    <div>{n}</div>
+                                {label.map(({ count, solved }) => (
+                                    <div>{count}</div>
                                 ))}
                             </LabelInner>
                         </FitText>
