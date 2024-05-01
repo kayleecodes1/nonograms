@@ -30,7 +30,6 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         dragStart: { x: -1, y: -1 },
         dragDirection: DragDirection.None,
         fillMode: FillMode.Fill,
-        lastFill: { x: -1, y: -1 },
     });
     const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -57,8 +56,6 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                 return;
             }
             onFill(x, y, dragState.current.fillMode);
-            dragState.current.lastFill.x = x;
-            dragState.current.lastFill.y = y;
         },
         [onFill]
     );
@@ -121,6 +118,11 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                 return;
             }
 
+            const { x, y } = gridCoordinate;
+            if (!gameState.Puzzle.Grid.getCell(x, y).IsEmpty) {
+                return
+            }
+
             // If unset, set drag direction.
             if (dragState.current.dragDirection === DragDirection.None) {
                 if (gridCoordinate.x !== dragState.current.dragStart.x) {
@@ -133,21 +135,13 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
             // TODO convert onFill to take an object ...
 
             if (dragState.current.dragDirection === DragDirection.Horizontal) {
-                if (dragState.current.lastFill.x === gridCoordinate.x) {
-                    return;
-                }
-                for (const x of range(dragState.current.lastFill.x, gridCoordinate.x, { exclusiveStart: true })) {
-                    handleFill(x, dragState.current.dragStart.y);
+                for (const x0 of range(dragState.current.dragStart.x, x, { exclusiveStart: true })) {
+                    handleFill(x0, dragState.current.dragStart.y);
                 }
             } else if (dragState.current.dragDirection === DragDirection.Vertical) {
-                if (dragState.current.lastFill.y === gridCoordinate.y) {
-                    return;
+                for (const y0 of range(dragState.current.dragStart.y, y, { exclusiveStart: true })) {
+                    handleFill(dragState.current.dragStart.x, y0);
                 }
-                for (const y of range(dragState.current.lastFill.y, gridCoordinate.y, { exclusiveStart: true })) {
-                    handleFill(dragState.current.dragStart.x, y);
-                }
-            } else {
-                handleFill(gridCoordinate.x, gridCoordinate.y);
             }
         };
         const onMouseUp = () => {
@@ -160,6 +154,12 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
             document.removeEventListener('mouseup', onMouseUp);
         };
     }, [handleFill]);
+
+    useEffect(() => {
+        gameState.Puzzle.addListener('lineComplete', (x, y, orientation) => {
+            // TODO
+        });
+    }, []);
 
     const SVG_WIDTH = CELL_SIZE * WIDTH + BORDER_STROKE_WIDTH;
     const SVG_HEIGHT = CELL_SIZE * HEIGHT + BORDER_STROKE_WIDTH;
@@ -210,6 +210,10 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                         </g>
                     );
                 })}
+                {/* Animations */}
+                <animate>
+                    TODO
+                </animate>
                 {/* Vertical Section Lines */}
                 {Array.from({ length: Math.ceil(WIDTH / 5) + 1 }).map((_, i) => {
                     const x = CELL_SIZE * Math.min(i * 5, WIDTH);

@@ -73,17 +73,17 @@ export class Puzzle {
         // If it is, fill any empty cells and emit event.
         const row = this._grid.getRow(y);
         const column = this._grid.getColumn(x);
-        const args: [Cell[], number, 'rowComplete' | 'columnComplete'][] = [
-            [row, y, 'rowComplete'],
-            [column, x, 'columnComplete'],
+        const args: [Cell[], 'row' | 'column'][] = [
+            [row, 'row'],
+            [column, 'column'],
         ];
-        for (const [cells, coordinate, event] of args) {
+        for (const [cells, orientation] of args) {
             const isSolved = cells.every((cell) => cell.IsCorrect);
             if (isSolved) {
                 for (const cell of cells) {
                     cell.solve();
                 }
-                this._eventSystem.emit(event, coordinate);
+                this._eventSystem.emit('lineComplete', x, y, orientation);
             }
         }
     }
@@ -179,8 +179,7 @@ export namespace Puzzle {
         fill: (x: number, y: number) => void;
         flag: (x: number, y: number) => void;
         error: (x: number, y: number) => void;
-        rowComplete: (y: number) => void;
-        columnComplete: (x: number) => void;
+        lineComplete: (x: number, y: number, orientation: 'row' | 'column') => void;
     };
 }
 

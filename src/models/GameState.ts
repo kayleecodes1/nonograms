@@ -36,8 +36,7 @@ class GameState {
         this.Puzzle.addListener('fill', createPlaySoundCallback(AudioEngine.Sound.Fill));
         this.Puzzle.addListener('flag', createPlaySoundCallback(AudioEngine.Sound.Flag));
         this.Puzzle.addListener('error', createPlaySoundCallback(AudioEngine.Sound.Error));
-        this.Puzzle.addListener('rowComplete', createPlaySoundCallback(AudioEngine.Sound.Success));
-        this.Puzzle.addListener('columnComplete', createPlaySoundCallback(AudioEngine.Sound.Success));
+        this.Puzzle.addListener('lineComplete', createPlaySoundCallback(AudioEngine.Sound.Success));
     }
 }
 
