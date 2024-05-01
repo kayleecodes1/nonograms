@@ -13,7 +13,11 @@ class Grid<T> {
         makeAutoObservable(this);
     }
 
-    public get Size(): number {
+    public get Width(): number {
+        return this._cells[0].length;
+    }
+
+    public get Height(): number {
         return this._cells.length;
     }
 
@@ -27,7 +31,7 @@ class Grid<T> {
 
     public getRow(rowIndex: number): T[] {
         const row = [];
-        for (let i = 0; i < this._cells.length; i++) {
+        for (let i = 0; i < this.Width; i++) {
             row.push(this._cells[rowIndex][i]);
         }
         return row;
@@ -35,7 +39,7 @@ class Grid<T> {
 
     public getRows(): T[][] {
         const rows = [];
-        for (let i = 0; i < this._cells.length; i++) {
+        for (let i = 0; i < this.Height; i++) {
             rows.push(this.getRow(i));
         }
         return rows;
@@ -43,7 +47,7 @@ class Grid<T> {
 
     public getColumn(columnIndex: number): T[] {
         const column = [];
-        for (let i = 0; i < this._cells.length; i++) {
+        for (let i = 0; i < this.Height; i++) {
             column.push(this._cells[i][columnIndex]);
         }
         return column;
@@ -51,7 +55,7 @@ class Grid<T> {
 
     public getColumns(): T[][] {
         const columns = [];
-        for (let i = 0; i < this._cells.length; i++) {
+        for (let i = 0; i < this.Width; i++) {
             columns.push(this.getColumn(i));
         }
         return columns;

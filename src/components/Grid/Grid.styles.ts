@@ -17,6 +17,5 @@ export const Cell = styled.rect<{
 
 export const SectionLine = styled.line({
     stroke: '#000',
-    strokeWidth: 4,
     strokeLinecap: 'square',
 });

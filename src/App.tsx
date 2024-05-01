@@ -50,16 +50,15 @@ const App: React.FC = observer(() => {
         };
     }, [audioEngine]);
 
-    // NOTE: removed for development
-    // useEffect(() => {
-    //     const handleContextMenu = (event: MouseEvent) => {
-    //         event.preventDefault();
-    //     };
-    //     document.addEventListener('contextmenu', handleContextMenu);
-    //     return () => {
-    //         document.removeEventListener('contextmenu', handleContextMenu);
-    //     };
-    // }, []);
+    useEffect(() => {
+        const handleContextMenu = (event: MouseEvent) => {
+            event.preventDefault();
+        };
+        document.addEventListener('contextmenu', handleContextMenu);
+        return () => {
+            document.removeEventListener('contextmenu', handleContextMenu);
+        };
+    }, []);
 
     const handleFill = (x: number, y: number, fillMode: FillMode): void => {
         const state =

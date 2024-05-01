@@ -2,30 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Reset } from 'styled-reset';
 import { GameStateProvider } from '@contexts/GameStateContext';
+import puzzles from '@data/puzzles';
 import GameState from '@models/GameState.ts';
 import App from './App.tsx';
 import './main.css';
 
-// const solution = [
-//     [true, false, false, false, false],
-//     [true, true, false, false, true],
-//     [true, false, false, true, true],
-//     [true, false, true, true, true],
-//     [false, false, false, true, true],
-// ];
-const solution = [
-    [false, false, true, true, true, true, true, true, false, false],
-    [false, true, true, false, false, false, false, true, true, false],
-    [true, false, true, true, true, true, true, true, false, true],
-    [true, true, true, false, false, false, false, true, true, true],
-    [true, true, false, true, true, true, true, false, true, true],
-    [true, true, false, true, true, true, true, false, true, true],
-    [true, true, true, true, true, true, true, true, true, true],
-    [true, false, true, false, false, false, false, true, false, true],
-    [true, false, true, false, false, false, false, true, false, true],
-    [false, true, true, false, true, true, false, true, true, false]
-];
-const gameState = new GameState(solution);
+const gameState = new GameState(puzzles[1]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

@@ -8,6 +8,7 @@ import transformScreenToSvg from '@utilities/transformScreenToSvg';
 import { Root, Cell as CellComponent, SectionLine } from './Grid.styles';
 
 const CELL_SIZE = 48;
+const BORDER_STROKE_WIDTH = 4;
 
 enum DragDirection {
     None,
@@ -21,14 +22,15 @@ interface GridProps {
 
 const Grid: React.FC<GridProps> = observer(({ onFill }) => {
     const gameState = useGameState();
-    const size = gameState.Puzzle.Size;
+    const WIDTH = gameState.Puzzle.Width;
+    const HEIGHT = gameState.Puzzle.Height;
 
     const dragState = useRef({
         isDragging: false,
         dragStart: { x: -1, y: -1 },
         dragDirection: DragDirection.None,
         fillMode: FillMode.Fill,
-        lastFill: { x: -1, y: -1 }
+        lastFill: { x: -1, y: -1 },
     });
     const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -40,8 +42,8 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         }
         const { x, y } = transformScreenToSvg(svg, screenPoint);
         return {
-            x: clamp(0, size - 1, Math.floor((x - 2) / CELL_SIZE)),
-            y: clamp(0, size - 1, Math.floor((y - 2) / CELL_SIZE)),
+            x: clamp(0, WIDTH - 1, Math.floor((x - 2) / CELL_SIZE)),
+            y: clamp(0, HEIGHT - 1, Math.floor((y - 2) / CELL_SIZE)),
         };
     };
 
@@ -138,24 +140,14 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                 if (dragState.current.lastFill.x === gridCoordinate.x) {
                     return;
                 }
-                for (const x of range(
-                    dragState.current.lastFill.x,
-                    gridCoordinate.x,
-                    { exclusiveStart: true }
-                )) {
+                for (const x of range(dragState.current.lastFill.x, gridCoordinate.x, { exclusiveStart: true })) {
                     handleFill(x, dragState.current.dragStart.y);
                 }
-            } else if (
-                dragState.current.dragDirection === DragDirection.Vertical
-            ) {
+            } else if (dragState.current.dragDirection === DragDirection.Vertical) {
                 if (dragState.current.lastFill.y === gridCoordinate.y) {
                     return;
                 }
-                for (const y of range(
-                    dragState.current.lastFill.y,
-                    gridCoordinate.y,
-                    { exclusiveStart: true }
-                )) {
+                for (const y of range(dragState.current.lastFill.y, gridCoordinate.y, { exclusiveStart: true })) {
                     handleFill(dragState.current.dragStart.x, y);
                 }
             } else {
@@ -173,15 +165,16 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         };
     }, [handleFill]);
 
-    const svgSize = CELL_SIZE * size + 4;
+    const SVG_WIDTH = CELL_SIZE * WIDTH + BORDER_STROKE_WIDTH;
+    const SVG_HEIGHT = CELL_SIZE * HEIGHT + BORDER_STROKE_WIDTH;
 
     return (
         <Root
             ref={svgRef}
             xmlns="http://www.w3.org/2000/svg"
-            width={svgSize / 2}
-            height={svgSize / 2}
-            viewBox={`0 0 ${svgSize} ${svgSize}`}
+            width={SVG_WIDTH / 2}
+            height={SVG_HEIGHT / 2}
+            viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
             onMouseDown={handleMouseDown}
         >
             <defs>
@@ -193,15 +186,14 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                 </symbol>
             </defs>
             <g transform="translate(2, 2)">
-                {Array.from({ length: size * size }).map((_, index) => {
-                    const cellX = index % size;
-                    const cellY = Math.floor(index / size);
+                {Array.from({ length: WIDTH * HEIGHT }).map((_, index) => {
+                    // TODO
+                    const cellX = index % WIDTH;
+                    const cellY = Math.floor(index / WIDTH);
                     const cell = gameState.Puzzle.Grid.getCell(cellX, cellY);
                     return (
                         <g
-                            transform={`translate(${CELL_SIZE * cellX}, ${
-                                CELL_SIZE * cellY
-                            })`}
+                            transform={`translate(${CELL_SIZE * cellX}, ${CELL_SIZE * cellY})`}
                             clipPath="url(#cellClip)"
                         >
                             <CellComponent
@@ -222,22 +214,32 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                         </g>
                     );
                 })}
-                {Array.from({ length: size / 5 + 1 }).map((_, i) => (
-                    <>
+                {/* Vertical Section Lines */}
+                {Array.from({ length: Math.ceil(WIDTH / 5) + 1 }).map((_, i) => {
+                    const x = CELL_SIZE * Math.min(i * 5, WIDTH);
+                    return (
+                        <SectionLine
+                            x1={x}
+                            y1={0}
+                            x2={x}
+                            y2={CELL_SIZE * HEIGHT}
+                            strokeWidth={BORDER_STROKE_WIDTH}
+                        />
+                    );
+                })}
+                {/* Horizontal Section Lines */}
+                {Array.from({ length: Math.ceil(HEIGHT / 5) + 1 }).map((_, i) => {
+                    const y = CELL_SIZE * Math.min(i * 5, HEIGHT);
+                    return (
                         <SectionLine
                             x1={0}
-                            y1={CELL_SIZE * i * 5}
-                            x2={CELL_SIZE * size}
-                            y2={CELL_SIZE * i * 5}
+                            y1={y}
+                            x2={CELL_SIZE * WIDTH}
+                            y2={y}
+                            strokeWidth={BORDER_STROKE_WIDTH}
                         />
-                        <SectionLine
-                            x1={CELL_SIZE * i * 5}
-                            y1={0}
-                            x2={CELL_SIZE * i * 5}
-                            y2={CELL_SIZE * size}
-                        />
-                    </>
-                ))}
+                    );
+                })}
             </g>
         </Root>
     );

@@ -10,10 +10,6 @@ export class Puzzle {
     private _eventSystem: EventSystem<Puzzle.Events>;
 
     constructor(solution: boolean[][]) {
-        if (![5, 10, 15].includes(solution.length)) {
-            throw new Error('Solution must be of size 5, 10, or 15');
-        }
-
         this._solution = solution;
         this._grid = Puzzle._createEmptyGrid(solution);
         this._eventSystem = new EventSystem();
@@ -25,8 +21,12 @@ export class Puzzle {
         return this._grid;
     }
 
-    public get Size(): number {
-        return this._grid.Size;
+    public get Width(): number {
+        return this._grid.Width;
+    }
+
+    public get Height(): number {
+        return this._grid.Height;
     }
 
     public get RowLabels(): Puzzle.Label[] {
