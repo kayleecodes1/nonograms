@@ -2,10 +2,10 @@ import { makeAutoObservable } from 'mobx';
 
 export class Cell {
     private _position: Cell.Position;
-    private _solution: Cell.Solution;
+    private _solution: boolean;
     private _state: Cell.State;
 
-    constructor(x: number, y: number, solution: Cell.Solution) {
+    constructor(x: number, y: number, solution: boolean) {
         this._position = { x, y };
         this._solution = solution;
         this._state = Cell.State.Empty;
@@ -17,7 +17,7 @@ export class Cell {
         return this._position;
     }
 
-    public get Solution(): Cell.Solution {
+    public get Solution(): boolean {
         return this._solution;
     }
 
@@ -39,15 +39,17 @@ export class Cell {
 
     public get IsCorrect(): boolean {
         return (
-            (this._state === Cell.State.Filled &&
-                this._solution === Cell.Solution.Filled) ||
-            (this._state === Cell.State.Flagged &&
-                this._solution === Cell.Solution.Flagged)
+            (this._solution && this._state === Cell.State.Filled) ||
+            (!this._solution && (this._state === Cell.State.Empty || this._state === Cell.State.Flagged))
         );
     }
 
     public setState(state: Cell.State): void {
         this._state = state;
+    }
+
+    public solve(): void {
+        this._state = this.Solution ? Cell.State.Filled : Cell.State.Flagged;
     }
 }
 
@@ -56,11 +58,6 @@ export namespace Cell {
         x: number;
         y: number;
     };
-
-    export enum Solution {
-        Filled,
-        Flagged,
-    }
 
     export enum State {
         Empty,

@@ -10,6 +10,7 @@ export class Puzzle {
     private _eventSystem: EventSystem<Puzzle.Events>;
 
     constructor(solution: boolean[][]) {
+        // TODO why do we need to store solution?
         this._solution = solution;
         this._grid = Puzzle._createEmptyGrid(solution);
         this._eventSystem = new EventSystem();
@@ -38,43 +39,53 @@ export class Puzzle {
     }
 
     // TODO
-    // public guess(x: number, y: number, guess: boolean): void {
+    public guess(x: number, y: number, guess: boolean): void {
+        const cell = this.Grid.getCell(x, y);
 
-    //     const cell = this.Grid.getCell(x, y);
-    //     if (!cell.IsEmpty) {
-    //         return;
-    //     }
+        // If the cell is not empty, do nothing.
+        if (!cell.IsEmpty) {
+            return;
+        }
 
-    //     cell.setState(state);
+        // Set the cell state.
+        cell.setState(guess ? Cell.State.Filled : Cell.State.Flagged);
 
-    //     if (cell.IsCorrect) {
-    //         if (state === Cell.State.Filled) {
-    //             fillAudio.currentTime = 0;
-    //             fillAudio.play();
-    //         } else if (state === Cell.State.Flagged) {
-    //             flagAudio.currentTime = 0;
-    //             flagAudio.play();
-    //         }
-    //     } else {
-    //         errorAudio.currentTime = 0;
-    //         errorAudio.play();
-    //     }
+        // TODO need to separate state, correctness, and display state
+        //      in current game rules, cells that are "incorrect" are still considered correctly filled
+        //          because a cell cannot be filled in wrong
 
-    //     // TODO check if !IsEmpty
+        // Emit event based on result of the guess.
+        if (cell.IsCorrect) {
+            if (cell.State === Cell.State.Filled) {
+                this._eventSystem.emit('fill', x, y);
+            } else if (cell.State === Cell.State.Flagged) {
+                this._eventSystem.emit('flag', x, y);
+            }
+        } else {
+            this._eventSystem.emit('error', x, y);
+        }
 
-    //     // TODO emit fill or error event
-
-    //     // TODO check if row or column is complete
-    //     //      if so, fill empties with flags and emit event
-    // }
+        // Check if the row or column is complete.
+        // If it is, fill any empty cells and emit event.
+        const row = this._grid.getRow(y);
+        const column = this._grid.getColumn(x);
+        const args: [Cell[], number, 'rowComplete' | 'columnComplete'][] = [
+            [row, y, 'rowComplete'],
+            [column, x, 'columnComplete'],
+        ];
+        for (const [cells, coordinate, event] of args) {
+            const isSolved = cells.every((cell) => cell.IsCorrect);
+            if (isSolved) {
+                for (const cell of cells) {
+                    cell.solve();
+                }
+                this._eventSystem.emit(event, coordinate);
+            }
+        }
+    }
 
     public reset(): void {
         this._grid = Puzzle._createEmptyGrid(this._solution);
-    }
-
-    // TODO remove this once guess logic is moved from GameState
-    public emit<Event extends keyof Puzzle.Events>(event: Event, ...args: Parameters<Puzzle.Events[Event]>): void {
-        this._eventSystem.emit(event, ...args);
     }
 
     public addListener<Event extends keyof Puzzle.Events>(event: Event, listener: Puzzle.Events[Event]): void {
@@ -89,40 +100,21 @@ export class Puzzle {
         this._eventSystem.clear();
     }
 
-    // protected static _checkSolved(cells: Cell[]): boolean {
-    //     for (const cell of cells) {
-    //         // TODO
-    //     }
-    //     return true;
-    // }
-
-    // protected static _fillCells(cells: Cell[]): void {
-    //     for (const cell of cells) {
-    //         // TODO
-    //     }
-    // }
-
     protected static _createEmptyGrid(solution: boolean[][]) {
-        const cells = solution.map((row, y) =>
-            row.map(
-                (value, x) =>
-                    new Cell(
-                        x,
-                        y,
-                        value ? Cell.Solution.Filled : Cell.Solution.Flagged
-                    )
-            )
-        );
+        const cells = solution.map((row, y) => row.map((value, x) => new Cell(x, y, value)));
         return new Grid(cells);
     }
 
     protected static _getLabel(cells: Cell[]): Puzzle.Label {
-        const solution = cells.map((cell) => cell.Solution === Cell.Solution.Filled);
-        const label = countAdjacent(solution).map((count) => ({
+        // Determine the groups for the solution.
+        const solutionGroups = countAdjacent(cells.map((cell) => cell.Solution));
+        const label = solutionGroups.map((count) => ({
             count,
             isSolved: false,
         }));
 
+        // Check for correctness from the beginning and then from the end.
+        // Update label solved state based on results.
         let currentIndex = 0;
         let currentCount = 0;
         let i = 0;
@@ -131,7 +123,7 @@ export class Puzzle {
             if (cell.IsEmpty || !cell.IsCorrect) {
                 break;
             }
-            if (cell.Solution === Cell.Solution.Flagged) {
+            if (cell.Solution === false) {
                 continue;
             }
             currentCount++;
@@ -141,7 +133,6 @@ export class Puzzle {
                 currentCount = 0;
             }
         }
-
         currentIndex = label.length - 1;
         currentCount = 0;
         // TODO this code is duplicated from above, abstract this
@@ -150,7 +141,7 @@ export class Puzzle {
             if (cell.IsEmpty || !cell.IsCorrect) {
                 break;
             }
-            if (cell.Solution === Cell.Solution.Flagged) {
+            if (cell.Solution === false) {
                 continue;
             }
             currentCount++;
@@ -185,12 +176,12 @@ export namespace Puzzle {
     export type Label = LabelItem[];
 
     export type Events = {
-        'fill': (x: number, y: number) => void,
-        'flag': (x: number, y: number) => void,
-        'error': (x: number, y: number) => void,
-        'rowComplete': (y: number) => void,
-        'columnComplete': (x: number) => void,
-    }
+        fill: (x: number, y: number) => void;
+        flag: (x: number, y: number) => void;
+        error: (x: number, y: number) => void;
+        rowComplete: (y: number) => void;
+        columnComplete: (x: number) => void;
+    };
 }
 
 export default Puzzle;

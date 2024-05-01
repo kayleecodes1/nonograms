@@ -7,7 +7,7 @@ import GameState from '@models/GameState.ts';
 import App from './App.tsx';
 import './main.css';
 
-const gameState = new GameState(puzzles[1]);
+const gameState = new GameState(puzzles[0]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

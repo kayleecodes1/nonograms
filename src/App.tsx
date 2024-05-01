@@ -26,6 +26,7 @@ const Main = styled.main({
 const App: React.FC = observer(() => {
     const gameState = useGameState();
 
+    // TODO move audio logic to its own component
     const audioEngine = useMemo(() => new AudioEngine(), []);
 
     useEffect(() => {
@@ -38,15 +39,22 @@ const App: React.FC = observer(() => {
         const errorListener = () => {
             audioEngine.playSound(AudioEngine.Sound.Error)
         };
+        const completeListener = () => {
+            audioEngine.playSound(AudioEngine.Sound.Success)
+        };
 
         gameState.Puzzle.addListener('fill', fillListener);
         gameState.Puzzle.addListener('flag', flagListener);
         gameState.Puzzle.addListener('error', errorListener);
+        gameState.Puzzle.addListener('rowComplete', completeListener);
+        gameState.Puzzle.addListener('columnComplete', completeListener);
 
         return () => {
             gameState.Puzzle.removeListener('fill', fillListener);
             gameState.Puzzle.removeListener('flag', flagListener);
             gameState.Puzzle.removeListener('error', errorListener);
+            gameState.Puzzle.removeListener('rowComplete', completeListener);
+            gameState.Puzzle.removeListener('columnComplete', completeListener);
         };
     }, [audioEngine]);
 
@@ -61,9 +69,7 @@ const App: React.FC = observer(() => {
     }, []);
 
     const handleFill = (x: number, y: number, fillMode: FillMode): void => {
-        const state =
-            fillMode === FillMode.Fill ? Cell.State.Filled : Cell.State.Flagged;
-        gameState.setCellState(x, y, state);
+        gameState.Puzzle.guess(x, y, fillMode === FillMode.Fill);
     };
 
     const rowLabels = gameState.Puzzle.RowLabels;

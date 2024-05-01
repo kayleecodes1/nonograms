@@ -74,14 +74,10 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
     }, []);
 
     useEffect(() => {
-        const errorListener = () => {
-            cancelDrag();
-        };
-
-        gameState.Puzzle.addListener('error', errorListener);
+        gameState.Puzzle.addListener('error', cancelDrag);
 
         return () => {
-            gameState.Puzzle.removeListener('error', errorListener);
+            gameState.Puzzle.removeListener('error', cancelDrag);
         };
     }, [cancelDrag]);
 
