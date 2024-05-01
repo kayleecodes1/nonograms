@@ -5,7 +5,7 @@ class Grid<T> {
 
     constructor(cells: T[][]) {
         if (!cells.every((row) => row.length === cells[0].length)) {
-            throw new Error('Grid rows must all be of equal size')
+            throw new Error('Grid rows must all be of equal size');
         }
 
         this._cells = cells;

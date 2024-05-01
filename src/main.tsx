@@ -29,5 +29,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <App />
             </div>
         </GameStateProvider>
-    </React.StrictMode>
+    </React.StrictMode>,
 );

@@ -34,7 +34,7 @@ const App: React.FC = observer(() => {
         };
     }, []);
 
-    // TODO decide whether to move this into 
+    // TODO decide whether to move this into
     const handleFill = (x: number, y: number, fillMode: FillMode): void => {
         gameState.Puzzle.guess(x, y, fillMode === FillMode.Fill);
     };

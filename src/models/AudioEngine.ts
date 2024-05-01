@@ -10,7 +10,7 @@ export class AudioEngine {
         [AudioEngine.Sound.Fill]: new Audio(fillSrc),
         [AudioEngine.Sound.Flag]: new Audio(flagSrc),
         [AudioEngine.Sound.Success]: new Audio(successSrc),
-        [AudioEngine.Sound.Toggle]: new Audio(toggleSrc)
+        [AudioEngine.Sound.Toggle]: new Audio(toggleSrc),
     };
 
     public playSound(sound: AudioEngine.Sound): void {
@@ -22,11 +22,11 @@ export class AudioEngine {
 
 export namespace AudioEngine {
     export enum Sound {
-        Error = "Error",
-        Fill = "Fill",
-        Flag = "Flag",
-        Success = "Success",
-        Toggle = "Toggle"
+        Error = 'Error',
+        Fill = 'Fill',
+        Flag = 'Flag',
+        Success = 'Success',
+        Toggle = 'Toggle',
     }
 }
 

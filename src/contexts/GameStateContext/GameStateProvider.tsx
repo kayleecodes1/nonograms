@@ -6,15 +6,8 @@ interface GameStateProviderProps {
     gameState: GameState;
 }
 GameStateContext.Provider;
-const GameStateProvider: React.FC<GameStateProviderProps> = ({
-    children,
-    gameState,
-}) => {
-    return (
-        <GameStateContext.Provider value={gameState}>
-            {children}
-        </GameStateContext.Provider>
-    );
+const GameStateProvider: React.FC<GameStateProviderProps> = ({ children, gameState }) => {
+    return <GameStateContext.Provider value={gameState}>{children}</GameStateContext.Provider>;
 };
 
 export default GameStateProvider;

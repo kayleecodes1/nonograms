@@ -1,7 +1,4 @@
-const transformScreenToSvg = (
-    svg: SVGSVGElement,
-    screenPoint: { x: number; y: number }
-): { x: number; y: number } => {
+const transformScreenToSvg = (svg: SVGSVGElement, screenPoint: { x: number; y: number }): { x: number; y: number } => {
     const point = svg.createSVGPoint();
     point.x = screenPoint.x;
     point.y = screenPoint.y;

@@ -27,10 +27,7 @@ const FitText: React.FC<FitTextProps> = ({ children, maxFontSize }) => {
         let fontSize = maxFontSize;
         while (fontSize > 0) {
             ruler.style.fontSize = `${fontSize}px`;
-            if (
-                ruler.scrollWidth > ruler.clientWidth ||
-                ruler.scrollHeight > ruler.clientHeight
-            ) {
+            if (ruler.scrollWidth > ruler.clientWidth || ruler.scrollHeight > ruler.clientHeight) {
                 fontSize--;
                 continue;
             }
@@ -44,10 +41,7 @@ const FitText: React.FC<FitTextProps> = ({ children, maxFontSize }) => {
     }, [children, maxFontSize]);
 
     return (
-        <div
-            ref={wrapperRef}
-            style={{ width: '100%', height: '100%', fontSize }}
-        >
+        <div ref={wrapperRef} style={{ width: '100%', height: '100%', fontSize }}>
             {children}
         </div>
     );

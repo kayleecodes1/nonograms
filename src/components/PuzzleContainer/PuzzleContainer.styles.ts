@@ -87,5 +87,5 @@ export const Label = styled.div<{
 }));
 
 export const LabelItem = styled.div<{ isSolved: boolean }>(({ isSolved }) => ({
-    opacity: isSolved ? 0.5 : 1
+    opacity: isSolved ? 0.5 : 1,
 }));

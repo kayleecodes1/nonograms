@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useGameState } from '@contexts/GameStateContext';
 import { FillMode } from '@models/GameState';
@@ -57,7 +57,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
             }
             onFill(x, y, dragState.current.fillMode);
         },
-        [onFill]
+        [onFill],
     );
 
     const cancelDrag = useCallback(() => {
@@ -67,7 +67,6 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         dragState.current.isDragging = false;
         dragState.current.dragStart = { x: -1, y: -1 };
         dragState.current.dragDirection = DragDirection.None;
-        dragState.current.lastFill = { x: -1, y: -1 };
     }, []);
 
     useEffect(() => {
@@ -76,7 +75,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         return () => {
             gameState.Puzzle.removeListener('error', cancelDrag);
         };
-    }, [cancelDrag]);
+    }, [gameState.Puzzle, cancelDrag]);
 
     const handleMouseDown = (event: React.MouseEvent) => {
         let fillMode: FillMode;
@@ -120,7 +119,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
 
             const { x, y } = gridCoordinate;
             if (!gameState.Puzzle.Grid.getCell(x, y).IsEmpty) {
-                return
+                return;
             }
 
             // If unset, set drag direction.
@@ -189,6 +188,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                     const cell = gameState.Puzzle.Grid.getCell(cellX, cellY);
                     return (
                         <g
+                            key={index}
                             transform={`translate(${CELL_SIZE * cellX}, ${CELL_SIZE * cellY})`}
                             clipPath="url(#cellClip)"
                         >
@@ -211,33 +211,22 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                     );
                 })}
                 {/* Animations */}
-                <animate>
+                {/* <animate>
                     TODO
-                </animate>
+                </animate> */}
+                <rect x1={0} y1={4 * CELL_SIZE * 4} x2={WIDTH * CELL_SIZE} y2={(4 + 1) * CELL_SIZE} fill="red" />
                 {/* Vertical Section Lines */}
                 {Array.from({ length: Math.ceil(WIDTH / 5) + 1 }).map((_, i) => {
                     const x = CELL_SIZE * Math.min(i * 5, WIDTH);
                     return (
-                        <SectionLine
-                            x1={x}
-                            y1={0}
-                            x2={x}
-                            y2={CELL_SIZE * HEIGHT}
-                            strokeWidth={BORDER_STROKE_WIDTH}
-                        />
+                        <SectionLine x1={x} y1={0} x2={x} y2={CELL_SIZE * HEIGHT} strokeWidth={BORDER_STROKE_WIDTH} />
                     );
                 })}
                 {/* Horizontal Section Lines */}
                 {Array.from({ length: Math.ceil(HEIGHT / 5) + 1 }).map((_, i) => {
                     const y = CELL_SIZE * Math.min(i * 5, HEIGHT);
                     return (
-                        <SectionLine
-                            x1={0}
-                            y1={y}
-                            x2={CELL_SIZE * WIDTH}
-                            y2={y}
-                            strokeWidth={BORDER_STROKE_WIDTH}
-                        />
+                        <SectionLine x1={0} y1={y} x2={CELL_SIZE * WIDTH} y2={y} strokeWidth={BORDER_STROKE_WIDTH} />
                     );
                 })}
             </g>
