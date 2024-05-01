@@ -28,8 +28,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         dragStart: { x: -1, y: -1 },
         dragDirection: DragDirection.None,
         fillMode: FillMode.Fill,
-        lastFill: { x: -1, y: -1 },
-        preventContextMenu: false
+        lastFill: { x: -1, y: -1 }
     });
     const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -62,6 +61,28 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         [onFill]
     );
 
+    const cancelDrag = useCallback(() => {
+        if (!dragState.current.isDragging) {
+            return;
+        }
+        dragState.current.isDragging = false;
+        dragState.current.dragStart = { x: -1, y: -1 };
+        dragState.current.dragDirection = DragDirection.None;
+        dragState.current.lastFill = { x: -1, y: -1 };
+    }, []);
+
+    useEffect(() => {
+        const errorListener = () => {
+            cancelDrag();
+        };
+
+        gameState.Puzzle.addListener('error', errorListener);
+
+        return () => {
+            gameState.Puzzle.removeListener('error', errorListener);
+        };
+    }, [cancelDrag]);
+
     const handleMouseDown = (event: React.MouseEvent) => {
         let fillMode: FillMode;
         if (event.button === 0) {
@@ -87,18 +108,6 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
 
         handleFill(x, y);
     };
-
-    useEffect(() => {
-        const handleContextMenu = (event: MouseEvent) => {
-            if (dragState.current.preventContextMenu) {
-                event.preventDefault();
-            }
-        };
-        document.addEventListener('contextmenu', handleContextMenu);
-        return () => {
-            document.removeEventListener('contextmenu', handleContextMenu);
-        };
-    }, []);
 
     useEffect(() => {
         const onMouseMove = (event: MouseEvent) => {
@@ -154,17 +163,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
             }
         };
         const onMouseUp = () => {
-            if (!dragState.current.isDragging) {
-                return;
-            }
-            dragState.current.isDragging = false;
-            dragState.current.dragStart = { x: -1, y: -1 };
-            dragState.current.dragDirection = DragDirection.None;
-            dragState.current.lastFill = { x: -1, y: -1 };
-            dragState.current.preventContextMenu = true;
-            setTimeout(() => {
-                dragState.current.preventContextMenu = false;
-            });
+            cancelDrag();
         };
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
