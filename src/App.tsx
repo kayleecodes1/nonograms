@@ -1,11 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import styled from 'styled-components';
 import Grid from '@components/Grid';
 import PuzzleContainer from '@components/PuzzleContainer';
 import { useGameState } from '@contexts/GameStateContext';
-import AudioEngine from '@models/AudioEngine';
-import Cell from '@models/Cell';
 import { FillMode } from '@models/GameState';
 
 // TODO move row and column labels into MobX getter
@@ -26,38 +24,6 @@ const Main = styled.main({
 const App: React.FC = observer(() => {
     const gameState = useGameState();
 
-    // TODO move audio logic to its own component
-    const audioEngine = useMemo(() => new AudioEngine(), []);
-
-    useEffect(() => {
-        const fillListener = () => {
-            audioEngine.playSound(AudioEngine.Sound.Fill)
-        };
-        const flagListener = () => {
-            audioEngine.playSound(AudioEngine.Sound.Flag)
-        };
-        const errorListener = () => {
-            audioEngine.playSound(AudioEngine.Sound.Error)
-        };
-        const completeListener = () => {
-            audioEngine.playSound(AudioEngine.Sound.Success)
-        };
-
-        gameState.Puzzle.addListener('fill', fillListener);
-        gameState.Puzzle.addListener('flag', flagListener);
-        gameState.Puzzle.addListener('error', errorListener);
-        gameState.Puzzle.addListener('rowComplete', completeListener);
-        gameState.Puzzle.addListener('columnComplete', completeListener);
-
-        return () => {
-            gameState.Puzzle.removeListener('fill', fillListener);
-            gameState.Puzzle.removeListener('flag', flagListener);
-            gameState.Puzzle.removeListener('error', errorListener);
-            gameState.Puzzle.removeListener('rowComplete', completeListener);
-            gameState.Puzzle.removeListener('columnComplete', completeListener);
-        };
-    }, [audioEngine]);
-
     useEffect(() => {
         const handleContextMenu = (event: MouseEvent) => {
             event.preventDefault();
@@ -68,10 +34,12 @@ const App: React.FC = observer(() => {
         };
     }, []);
 
+    // TODO decide whether to move this into 
     const handleFill = (x: number, y: number, fillMode: FillMode): void => {
         gameState.Puzzle.guess(x, y, fillMode === FillMode.Fill);
     };
 
+    // TODO move these into the label components ?
     const rowLabels = gameState.Puzzle.RowLabels;
     const columnLabels = gameState.Puzzle.ColumnLabels;
 

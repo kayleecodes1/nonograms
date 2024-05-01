@@ -38,6 +38,10 @@ export class Puzzle {
         return this._grid.getColumns().map(Puzzle._getLabel);
     }
 
+    public destroy(): void {
+        this._eventSystem.clear();
+    }
+
     // TODO
     public guess(x: number, y: number, guess: boolean): void {
         const cell = this.Grid.getCell(x, y);
@@ -94,10 +98,6 @@ export class Puzzle {
 
     public removeListener<Event extends keyof Puzzle.Events>(event: Event, listener: Puzzle.Events[Event]): void {
         this._eventSystem.off(event, listener);
-    }
-
-    public clearListeners(): void {
-        this._eventSystem.clear();
     }
 
     protected static _createEmptyGrid(solution: boolean[][]) {
