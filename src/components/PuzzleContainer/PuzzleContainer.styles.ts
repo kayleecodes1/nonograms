@@ -32,8 +32,9 @@ export const Main = styled.div({
 });
 
 export const LabelContainer = styled.div<{
+    isSolved: boolean;
     orientation: Orientation;
-}>(({ orientation }) => ({
+}>(({ isSolved, orientation }) => ({
     boxSizing: 'border-box',
     fontFamily: '"Roboto Mono", monospace',
     fontWeight: 400,
@@ -44,7 +45,7 @@ export const LabelContainer = styled.div<{
     WebkitFontSmoothing: 'antialiased',
     MozOsxFontSmoothing: 'grayscale',
     textRendering: 'optimizeLegibility',
-    background: '#EAEEF9',
+    background: isSolved ? '#FFF' : '#EAEEF9',
     borderRadius: 2,
     border: '1px solid #DDE4EA',
     overflow: 'hidden',
