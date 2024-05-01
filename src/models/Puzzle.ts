@@ -1,11 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 import Cell from '@models/Cell';
+import EventSystem from '@models/EventSystem';
 import Grid from '@models/Grid';
 import countAdjacent from '@utilities/countAdjacent';
 
 export class Puzzle {
     private _solution: boolean[][];
     private _grid: Grid<Cell>;
+    private _eventSystem: EventSystem<Puzzle.Events>;
 
     constructor(solution: boolean[][]) {
         if (![5, 10, 15].includes(solution.length)) {
@@ -14,6 +16,7 @@ export class Puzzle {
 
         this._solution = solution;
         this._grid = Puzzle._createEmptyGrid(solution);
+        this._eventSystem = new EventSystem();
 
         makeAutoObservable(this);
     }
@@ -34,9 +37,70 @@ export class Puzzle {
         return this._grid.getColumns().map(Puzzle._getLabel);
     }
 
+    // TODO
+    // public guess(x: number, y: number, guess: boolean): void {
+
+    //     const cell = this.Grid.getCell(x, y);
+    //     if (!cell.IsEmpty) {
+    //         return;
+    //     }
+
+    //     cell.setState(state);
+
+    //     if (cell.IsCorrect) {
+    //         if (state === Cell.State.Filled) {
+    //             fillAudio.currentTime = 0;
+    //             fillAudio.play();
+    //         } else if (state === Cell.State.Flagged) {
+    //             flagAudio.currentTime = 0;
+    //             flagAudio.play();
+    //         }
+    //     } else {
+    //         errorAudio.currentTime = 0;
+    //         errorAudio.play();
+    //     }
+
+    //     // TODO check if !IsEmpty
+
+    //     // TODO emit fill or error event
+
+    //     // TODO check if row or column is complete
+    //     //      if so, fill empties with flags and emit event
+    // }
+
     public reset(): void {
         this._grid = Puzzle._createEmptyGrid(this._solution);
     }
+
+    // TODO remove this once guess logic is moved from GameState
+    public emit<Event extends keyof Puzzle.Events>(event: Event, ...args: Parameters<Puzzle.Events[Event]>): void {
+        this._eventSystem.emit(event, ...args);
+    }
+
+    public addListener<Event extends keyof Puzzle.Events>(event: Event, listener: Puzzle.Events[Event]): void {
+        this._eventSystem.on(event, listener);
+    }
+
+    public removeListener<Event extends keyof Puzzle.Events>(event: Event, listener: Puzzle.Events[Event]): void {
+        this._eventSystem.off(event, listener);
+    }
+
+    public clearListeners(): void {
+        this._eventSystem.clear();
+    }
+
+    // protected static _checkSolved(cells: Cell[]): boolean {
+    //     for (const cell of cells) {
+    //         // TODO
+    //     }
+    //     return true;
+    // }
+
+    // protected static _fillCells(cells: Cell[]): void {
+    //     for (const cell of cells) {
+    //         // TODO
+    //     }
+    // }
 
     protected static _createEmptyGrid(solution: boolean[][]) {
         const cells = solution.map((row, y) =>
@@ -119,6 +183,14 @@ export namespace Puzzle {
     }
 
     export type Label = LabelItem[];
+
+    export type Events = {
+        'fill': (x: number, y: number) => void,
+        'flag': (x: number, y: number) => void,
+        'error': (x: number, y: number) => void,
+        'rowComplete': (y: number) => void,
+        'columnComplete': (x: number) => void,
+    }
 }
 
 export default Puzzle;
