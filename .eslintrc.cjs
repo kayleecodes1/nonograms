@@ -12,6 +12,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     plugins: ['react-refresh'],
     rules: {
+        // 'react/jsx-max-props-per-line': ['warn', { maximum: 4 }],
         'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
 };

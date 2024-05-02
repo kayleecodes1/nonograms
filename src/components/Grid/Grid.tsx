@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useGameState } from '@contexts/GameStateContext';
 import { FillMode } from '@models/GameState';
 import clamp from '@utilities/clamp';
 import range from '@utilities/range';
 import transformScreenToSvg from '@utilities/transformScreenToSvg';
-import { Root, Cell as CellComponent, SectionLine } from './Grid.styles';
+import { Root, Cell as CellComponent, SectionLine, LineComplete } from './Grid.styles';
 
 const CELL_SIZE = 48;
 const BORDER_STROKE_WIDTH = 4;
@@ -24,6 +24,10 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
     const gameState = useGameState();
     const WIDTH = gameState.Puzzle.Width;
     const HEIGHT = gameState.Puzzle.Height;
+
+    //--------------------------------------------------------------------------
+    // Cell Interaction
+    //--------------------------------------------------------------------------
 
     const dragState = useRef({
         isDragging: false,
@@ -154,11 +158,70 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         };
     }, [handleFill]);
 
+    //--------------------------------------------------------------------------
+    // Line Complete
+    //--------------------------------------------------------------------------
+
+    const [lineCompleteState, setLineCompleteState] = useState(() => ({
+        row: {
+            isActive: false,
+            key: -1,
+            x: -1,
+            y: -1,
+        },
+        column: {
+            isActive: false,
+            key: -1,
+            x: -1,
+            y: -1,
+        },
+    }));
+
+    const LINE_COMPLETE_DURATION = 800;
+
     useEffect(() => {
-        gameState.Puzzle.addListener('lineComplete', (x, y, orientation) => {
-            // TODO
-        });
+        const nonces = {
+            row: {},
+            column: {},
+        };
+        const onLineComplete = (x: number, y: number, orientation: 'row' | 'column') => {
+            const nonce = (nonces[orientation] = {});
+            setLineCompleteState((prevState) => ({
+                ...prevState,
+                [orientation]: {
+                    isActive: true,
+                    key: Date.now(),
+                    x,
+                    y,
+                },
+            }));
+            setTimeout(() => {
+                if (nonce !== nonces[orientation]) {
+                    return;
+                }
+                // TODO this could trigger after component unmount
+                setLineCompleteState((prevState) => ({
+                    ...prevState,
+                    [orientation]: {
+                        isActive: false,
+                        key: -1,
+                        x: -1,
+                        y: -1,
+                    },
+                }));
+            }, LINE_COMPLETE_DURATION);
+        };
+
+        gameState.Puzzle.addListener('lineComplete', onLineComplete);
+
+        return () => {
+            gameState.Puzzle.removeListener('lineComplete', onLineComplete);
+        };
     }, []);
+
+    //--------------------------------------------------------------------------
+    // Render
+    //--------------------------------------------------------------------------
 
     const SVG_WIDTH = CELL_SIZE * WIDTH + BORDER_STROKE_WIDTH;
     const SVG_HEIGHT = CELL_SIZE * HEIGHT + BORDER_STROKE_WIDTH;
@@ -176,9 +239,22 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                 <clipPath id="cellClip">
                     <rect width={CELL_SIZE} height={CELL_SIZE} />
                 </clipPath>
+                <clipPath id="gridClip">
+                    <rect width={CELL_SIZE * WIDTH} height={HEIGHT * CELL_SIZE} />
+                </clipPath>
                 <symbol id="flagIcon" viewBox="0 0 24 24" shapeRendering="geometricPrecision">
                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
                 </symbol>
+                <linearGradient id="lineCompleteHorizontalGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stopColor="#2E85EC" stopOpacity="0.2" />
+                    <stop offset="50%" stopColor="#2E85EC" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#2E85EC" stopOpacity="0.2" />
+                </linearGradient>
+                <linearGradient id="lineCompleteVerticalGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                    <stop offset="0%" stopColor="#2E85EC" stopOpacity="0.2" />
+                    <stop offset="50%" stopColor="#2E85EC" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#2E85EC" stopOpacity="0.2" />
+                </linearGradient>
             </defs>
             <g transform="translate(2, 2)">
                 {Array.from({ length: WIDTH * HEIGHT }).map((_, index) => {
@@ -210,11 +286,40 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                         </g>
                     );
                 })}
-                {/* Animations */}
-                {/* <animate>
-                    TODO
-                </animate> */}
-                <rect x1={0} y1={4 * CELL_SIZE * 4} x2={WIDTH * CELL_SIZE} y2={(4 + 1) * CELL_SIZE} fill="red" />
+                {/* Row Complete Animation */}
+                {lineCompleteState.row.isActive && (
+                    <g key={lineCompleteState.row.key} clipPath="url(#gridClip)">
+                        <g
+                            transform={`translate(${(lineCompleteState.row.x + 0.5) * CELL_SIZE} ${(lineCompleteState.row.y + 0.5) * CELL_SIZE})`}
+                        >
+                            <LineComplete
+                                orientation="horizontal"
+                                x={(-1.5 * WIDTH * CELL_SIZE) / 2}
+                                y={(-1 * CELL_SIZE) / 2}
+                                width={1.5 * WIDTH * CELL_SIZE}
+                                height={CELL_SIZE}
+                                fill="url(#lineCompleteHorizontalGradient)"
+                            />
+                        </g>
+                    </g>
+                )}
+                {/* Column Complete Animation */}
+                {lineCompleteState.column.isActive && (
+                    <g key={lineCompleteState.column.key} clipPath="url(#gridClip)">
+                        <g
+                            transform={`translate(${(lineCompleteState.column.x + 0.5) * CELL_SIZE} ${(lineCompleteState.column.y + 0.5) * CELL_SIZE})`}
+                        >
+                            <LineComplete
+                                orientation="vertical"
+                                x={(-1 * CELL_SIZE) / 2}
+                                y={(-1.5 * HEIGHT * CELL_SIZE) / 2}
+                                width={CELL_SIZE}
+                                height={1.5 * HEIGHT * CELL_SIZE}
+                                fill="url(#lineCompleteVerticalGradient)"
+                            />
+                        </g>
+                    </g>
+                )}
                 {/* Vertical Section Lines */}
                 {Array.from({ length: Math.ceil(WIDTH / 5) + 1 }).map((_, i) => {
                     const x = CELL_SIZE * Math.min(i * 5, WIDTH);
