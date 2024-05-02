@@ -17,7 +17,6 @@ BUGS
         currently shows red guess, but should be red solution
         also prevents IsCorrect from working correctly, even if its error it should be correct with current rules
         don't forget to consider label calculation, which uses IsCorrect
-[ ] Fix console errors (mostly attribute names and React keys)
 ...
 
 // consider integrating individual components with GameState / MobX more tightly
@@ -36,5 +35,7 @@ BUGS
 [X] Change entire label container state if full row/column is solved
 [X] Add animation for row/column complete
 [X] Fix linting errors
+[ ] Fix console errors (mostly attribute names and React keys)
+
 
 // how to ensure naming doesn't conflict between models and components?

@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { StyleSheetManager } from 'styled-components';
+import isPropValid from '@emotion/is-prop-valid';
 import { Reset } from 'styled-reset';
 import { GameStateProvider } from '@contexts/GameStateContext';
 import puzzles from '@data/puzzles';
@@ -12,22 +14,24 @@ const gameState = new GameState(puzzles[0]);
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <Reset />
-        <GameStateProvider gameState={gameState}>
-            <div
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden',
-                }}
-            >
-                <App />
-            </div>
-        </GameStateProvider>
+        <StyleSheetManager shouldForwardProp={isPropValid}>
+            <GameStateProvider gameState={gameState}>
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <App />
+                </div>
+            </GameStateProvider>
+        </StyleSheetManager>
     </React.StrictMode>,
 );
