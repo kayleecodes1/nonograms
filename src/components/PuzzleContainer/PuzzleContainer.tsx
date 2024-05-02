@@ -12,12 +12,14 @@ const PuzzleContainer: React.FC<PuzzleContainerProps> = ({ children, columnLabel
     return (
         <Root>
             <RowLabels size={rowLabels.length}>
-                {rowLabels.map((label) => (
-                    <LabelContainer isSolved={label.every(({ isSolved }) => isSolved)} orientation="horizontal">
+                {rowLabels.map((label, i) => (
+                    <LabelContainer key={i} isSolved={label.every(({ isSolved }) => isSolved)} orientation="horizontal">
                         <FitText maxFontSize={12}>
                             <Label orientation="horizontal">
-                                {label.map(({ count, isSolved }) => (
-                                    <LabelItem isSolved={isSolved}>{count}</LabelItem>
+                                {label.map(({ count, isSolved }, j) => (
+                                    <LabelItem key={j} isSolved={isSolved}>
+                                        {count}
+                                    </LabelItem>
                                 ))}
                             </Label>
                         </FitText>
@@ -25,12 +27,14 @@ const PuzzleContainer: React.FC<PuzzleContainerProps> = ({ children, columnLabel
                 ))}
             </RowLabels>
             <ColumnLabels size={columnLabels.length}>
-                {columnLabels.map((label) => (
-                    <LabelContainer isSolved={label.every(({ isSolved }) => isSolved)} orientation="vertical">
+                {columnLabels.map((label, i) => (
+                    <LabelContainer key={i} isSolved={label.every(({ isSolved }) => isSolved)} orientation="vertical">
                         <FitText maxFontSize={12}>
                             <Label orientation="vertical">
-                                {label.map(({ count, isSolved }) => (
-                                    <LabelItem isSolved={isSolved}>{count}</LabelItem>
+                                {label.map(({ count, isSolved }, j) => (
+                                    <LabelItem key={j} isSolved={isSolved}>
+                                        {count}
+                                    </LabelItem>
                                 ))}
                             </Label>
                         </FitText>

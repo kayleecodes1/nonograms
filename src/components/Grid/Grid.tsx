@@ -324,14 +324,28 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                 {Array.from({ length: Math.ceil(WIDTH / 5) + 1 }).map((_, i) => {
                     const x = CELL_SIZE * Math.min(i * 5, WIDTH);
                     return (
-                        <SectionLine x1={x} y1={0} x2={x} y2={CELL_SIZE * HEIGHT} strokeWidth={BORDER_STROKE_WIDTH} />
+                        <SectionLine
+                            key={i}
+                            x1={x}
+                            y1={0}
+                            x2={x}
+                            y2={CELL_SIZE * HEIGHT}
+                            strokeWidth={BORDER_STROKE_WIDTH}
+                        />
                     );
                 })}
                 {/* Horizontal Section Lines */}
                 {Array.from({ length: Math.ceil(HEIGHT / 5) + 1 }).map((_, i) => {
                     const y = CELL_SIZE * Math.min(i * 5, HEIGHT);
                     return (
-                        <SectionLine x1={0} y1={y} x2={CELL_SIZE * WIDTH} y2={y} strokeWidth={BORDER_STROKE_WIDTH} />
+                        <SectionLine
+                            key={i}
+                            x1={0}
+                            y1={y}
+                            x2={CELL_SIZE * WIDTH}
+                            y2={y}
+                            strokeWidth={BORDER_STROKE_WIDTH}
+                        />
                     );
                 })}
             </g>

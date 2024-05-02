@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export class EventSystem<EventMap extends { [event: string]: (...args: any[]) => void }> {
     private _listeners: { [eventName in keyof EventMap]?: Set<Function> } = {};
 
