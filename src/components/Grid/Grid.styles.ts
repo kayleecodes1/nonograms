@@ -7,10 +7,9 @@ export const Root = styled.svg({
 
 export const Cell = styled.rect<{
     isFilled: boolean;
-    isCorrect: boolean;
-}>(({ isFilled, isCorrect }) => ({
-    fill: isFilled ? (isCorrect ? '#344861' : '#F65C5C') : '#FFF',
-    stroke: isFilled ? (isCorrect ? '#18283F' : '#BA474A') : '#BDC6D5',
+}>(({ isFilled }) => ({
+    fill: isFilled ? '#344861' : '#FFF',
+    stroke: isFilled ? '#18283F' : '#BDC6D5',
     strokeWidth: 2,
     strokeLinecap: 'square',
 }));

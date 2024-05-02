@@ -54,10 +54,6 @@ export class Puzzle {
         // Set the cell state.
         cell.setState(guess ? Cell.State.Filled : Cell.State.Flagged);
 
-        // TODO need to separate state, correctness, and display state
-        //      in current game rules, cells that are "incorrect" are still considered correctly filled
-        //          because a cell cannot be filled in wrong
-
         // Emit event based on result of the guess.
         if (cell.IsCorrect) {
             if (cell.State === Cell.State.Filled) {
@@ -66,6 +62,8 @@ export class Puzzle {
                 this._eventSystem.emit('flag', x, y);
             }
         } else {
+            cell.solve();
+            cell.setError(true);
             this._eventSystem.emit('error', x, y);
         }
 

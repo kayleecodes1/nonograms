@@ -35,7 +35,8 @@ BUGS
 [X] Change entire label container state if full row/column is solved
 [X] Add animation for row/column complete
 [X] Fix linting errors
-[ ] Fix console errors (mostly attribute names and React keys)
+[X] Fix console errors (mostly attribute names and React keys)
+[ ] Refactor Cell to distinguish between guess and display state
 
 
 // how to ensure naming doesn't conflict between models and components?

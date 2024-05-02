@@ -4,11 +4,13 @@ export class Cell {
     private _position: Cell.Position;
     private _solution: boolean;
     private _state: Cell.State;
+    private _hasError: boolean;
 
     constructor(x: number, y: number, solution: boolean) {
         this._position = { x, y };
         this._solution = solution;
         this._state = Cell.State.Empty;
+        this._hasError = false;
 
         makeAutoObservable(this);
     }
@@ -23,6 +25,10 @@ export class Cell {
 
     public get State(): Cell.State {
         return this._state;
+    }
+
+    public get HasError(): boolean {
+        return this._hasError;
     }
 
     public get IsEmpty(): boolean {
@@ -50,6 +56,10 @@ export class Cell {
 
     public solve(): void {
         this._state = this.Solution ? Cell.State.Filled : Cell.State.Flagged;
+    }
+
+    public setError(hasError: boolean) {
+        this._hasError = hasError;
     }
 }
 

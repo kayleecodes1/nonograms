@@ -270,7 +270,6 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                         >
                             <CellComponent
                                 isFilled={cell.IsFilled}
-                                isCorrect={cell.IsCorrect}
                                 width={CELL_SIZE}
                                 height={CELL_SIZE}
                                 overflow="hidden"
@@ -280,7 +279,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                                     href="#flagIcon"
                                     width={CELL_SIZE}
                                     height={CELL_SIZE}
-                                    fill={cell.IsCorrect ? '#344861' : '#F65C5C'}
+                                    fill={cell.HasError ? '#F65C5C' : '#344861'}
                                 />
                             )}
                         </g>
