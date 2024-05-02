@@ -1,49 +1,55 @@
-import FitText from '@components/FitText';
-import Puzzle from '@models/Puzzle';
-import { Root, RowLabels, ColumnLabels, Main, LabelContainer, Label, LabelItem } from './PuzzleContainer.styles';
+import React from 'react';
+import ColumnLabels from './ColumnLabels';
+import Label from './Label';
+import Main from './Main';
+import RowLabels from './RowLabels';
+import { Root } from './PuzzleContainer.styles';
 
 interface PuzzleContainerProps {
     children?: React.ReactNode;
-    columnLabels: Puzzle.Label[];
-    rowLabels: Puzzle.Label[];
 }
 
-const PuzzleContainer: React.FC<PuzzleContainerProps> = ({ children, columnLabels, rowLabels }) => {
+interface PuzzleContainerChildComponents {
+    ColumnLabels: typeof ColumnLabels;
+    Label: typeof Label;
+    Main: typeof Main;
+    RowLabels: typeof RowLabels;
+}
+
+const PuzzleContainer: React.FC<PuzzleContainerProps> & PuzzleContainerChildComponents = ({ children }) => {
+    let rowLabels: React.ReactElement | null = null;
+    let columnLabels: React.ReactElement | null = null;
+    let main: React.ReactElement | null = null;
+
+    React.Children.forEach(children, (child) => {
+        if (!React.isValidElement(child)) {
+            return;
+        }
+        switch (child.type) {
+            case RowLabels:
+                rowLabels = rowLabels || child;
+                break;
+            case ColumnLabels:
+                columnLabels = columnLabels || child;
+                break;
+            case Main:
+                main = main || child;
+                break;
+        }
+    });
+
     return (
         <Root>
-            <RowLabels size={rowLabels.length}>
-                {rowLabels.map((label, i) => (
-                    <LabelContainer key={i} isSolved={label.every(({ isSolved }) => isSolved)} orientation="horizontal">
-                        <FitText maxFontSize={12}>
-                            <Label orientation="horizontal">
-                                {label.map(({ count, isSolved }, j) => (
-                                    <LabelItem key={j} isSolved={isSolved}>
-                                        {count}
-                                    </LabelItem>
-                                ))}
-                            </Label>
-                        </FitText>
-                    </LabelContainer>
-                ))}
-            </RowLabels>
-            <ColumnLabels size={columnLabels.length}>
-                {columnLabels.map((label, i) => (
-                    <LabelContainer key={i} isSolved={label.every(({ isSolved }) => isSolved)} orientation="vertical">
-                        <FitText maxFontSize={12}>
-                            <Label orientation="vertical">
-                                {label.map(({ count, isSolved }, j) => (
-                                    <LabelItem key={j} isSolved={isSolved}>
-                                        {count}
-                                    </LabelItem>
-                                ))}
-                            </Label>
-                        </FitText>
-                    </LabelContainer>
-                ))}
-            </ColumnLabels>
-            <Main>{children}</Main>
+            {rowLabels}
+            {columnLabels}
+            {main}
         </Root>
     );
 };
+
+PuzzleContainer.ColumnLabels = ColumnLabels;
+PuzzleContainer.Label = Label;
+PuzzleContainer.Main = Main;
+PuzzleContainer.RowLabels = RowLabels;
 
 export default PuzzleContainer;

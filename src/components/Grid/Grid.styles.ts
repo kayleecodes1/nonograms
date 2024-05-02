@@ -1,4 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
+import { Orientation } from '@constants/index';
 
 export const Root = styled.svg({
     shapeRendering: 'crispEdges',
@@ -19,21 +20,21 @@ export const SectionLine = styled.line({
     strokeLinecap: 'square',
 });
 
-const completeAnimation = (orientation: 'horizontal' | 'vertical') =>
+const completeAnimation = (orientation: Orientation) =>
     keyframes({
         '0%': {
-            transform: `${orientation === 'horizontal' ? 'scaleX' : 'scaleY'}(0)`,
+            transform: `${orientation === Orientation.Horizontal ? 'scaleX' : 'scaleY'}(0)`,
             opacity: 1,
         },
         '100%': {
-            transform: `${orientation === 'horizontal' ? 'scaleX' : 'scaleY'}(3)`,
+            transform: `${orientation === Orientation.Horizontal ? 'scaleX' : 'scaleY'}(3)`,
             opacity: 0,
         },
     });
 
-export const LineComplete = styled.rect<{ orientation: 'horizontal' | 'vertical' }>(
+export const LineComplete = styled.rect<{ orientation: Orientation }>(
     ({ orientation }) => ({
-        transform: orientation === 'horizontal' ? 'scaleX(1)' : 'scaleY(1)',
+        transform: orientation === Orientation.Horizontal ? 'scaleX(1)' : 'scaleY(1)',
         opacity: 1,
     }),
     css`

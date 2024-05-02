@@ -6,18 +6,11 @@ FEATURES
 
 REFACTOR
 
-[ ] Refactor PuzzleContainer to use child slots
 [ ] Refactor label calculation to abstract forward backward logic
 [ ] Implement cell component
 [ ] Separate Grid component and InteractiveGrid logic ?? maybe
 
 BUGS
-
-[ ] Refactor Cell to distinguish between guess and display state
-        currently shows red guess, but should be red solution
-        also prevents IsCorrect from working correctly, even if its error it should be correct with current rules
-        don't forget to consider label calculation, which uses IsCorrect
-...
 
 // consider integrating individual components with GameState / MobX more tightly
 //  but can still maintain display components, like Grid
@@ -36,7 +29,9 @@ BUGS
 [X] Add animation for row/column complete
 [X] Fix linting errors
 [X] Fix console errors (mostly attribute names and React keys)
-[ ] Refactor Cell to distinguish between guess and display state
+[X] Refactor Cell to distinguish between guess and display state
+[ ] Refactor PuzzleContainer to use child slots
+[ ] Change global styles to use Styled Components, and implement Theme
 
 
 // how to ensure naming doesn't conflict between models and components?

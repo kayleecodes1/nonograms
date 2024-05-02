@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import { Orientation } from '@constants/index';
 import { useGameState } from '@contexts/GameStateContext';
 import { FillMode } from '@models/GameState';
 import clamp from '@utilities/clamp';
@@ -9,12 +10,6 @@ import { Root, Cell as CellComponent, SectionLine, LineComplete } from './Grid.s
 
 const CELL_SIZE = 48;
 const BORDER_STROKE_WIDTH = 4;
-
-enum DragDirection {
-    None,
-    Horizontal,
-    Vertical,
-}
 
 interface GridProps {
     onFill: (x: number, y: number, fillMode: FillMode) => void;
@@ -32,7 +27,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
     const dragState = useRef({
         isDragging: false,
         dragStart: { x: -1, y: -1 },
-        dragDirection: DragDirection.None,
+        dragDirection: null as Orientation | null,
         fillMode: FillMode.Fill,
     });
     const svgRef = useRef<SVGSVGElement | null>(null);
@@ -70,7 +65,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
         }
         dragState.current.isDragging = false;
         dragState.current.dragStart = { x: -1, y: -1 };
-        dragState.current.dragDirection = DragDirection.None;
+        dragState.current.dragDirection = null;
     }, []);
 
     useEffect(() => {
@@ -127,21 +122,21 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
             }
 
             // If unset, set drag direction.
-            if (dragState.current.dragDirection === DragDirection.None) {
+            if (dragState.current.dragDirection === null) {
                 if (gridCoordinate.x !== dragState.current.dragStart.x) {
-                    dragState.current.dragDirection = DragDirection.Horizontal;
+                    dragState.current.dragDirection = Orientation.Horizontal;
                 } else if (gridCoordinate.y !== dragState.current.dragStart.y) {
-                    dragState.current.dragDirection = DragDirection.Vertical;
+                    dragState.current.dragDirection = Orientation.Vertical;
                 }
             }
 
             // TODO convert onFill to take an object ...
 
-            if (dragState.current.dragDirection === DragDirection.Horizontal) {
+            if (dragState.current.dragDirection === Orientation.Horizontal) {
                 for (const x0 of range(dragState.current.dragStart.x, x, { exclusiveStart: true })) {
                     handleFill(x0, dragState.current.dragStart.y);
                 }
-            } else if (dragState.current.dragDirection === DragDirection.Vertical) {
+            } else if (dragState.current.dragDirection === Orientation.Vertical) {
                 for (const y0 of range(dragState.current.dragStart.y, y, { exclusiveStart: true })) {
                     handleFill(dragState.current.dragStart.x, y0);
                 }
@@ -292,7 +287,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                             transform={`translate(${(lineCompleteState.row.x + 0.5) * CELL_SIZE} ${(lineCompleteState.row.y + 0.5) * CELL_SIZE})`}
                         >
                             <LineComplete
-                                orientation="horizontal"
+                                orientation={Orientation.Horizontal}
                                 x={(-1.5 * WIDTH * CELL_SIZE) / 2}
                                 y={(-1 * CELL_SIZE) / 2}
                                 width={1.5 * WIDTH * CELL_SIZE}
@@ -309,7 +304,7 @@ const Grid: React.FC<GridProps> = observer(({ onFill }) => {
                             transform={`translate(${(lineCompleteState.column.x + 0.5) * CELL_SIZE} ${(lineCompleteState.column.y + 0.5) * CELL_SIZE})`}
                         >
                             <LineComplete
-                                orientation="vertical"
+                                orientation={Orientation.Vertical}
                                 x={(-1 * CELL_SIZE) / 2}
                                 y={(-1.5 * HEIGHT * CELL_SIZE) / 2}
                                 width={CELL_SIZE}
