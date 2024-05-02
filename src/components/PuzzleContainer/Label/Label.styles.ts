@@ -4,9 +4,9 @@ import { Orientation } from '@constants/index';
 export const Root = styled.div<{
     isSolved: boolean;
     orientation: Orientation;
-}>(({ isSolved, orientation }) => ({
+}>(({ isSolved, orientation, theme }) => ({
     boxSizing: 'border-box',
-    fontFamily: '"Roboto Mono", monospace',
+    fontFamily: theme.typefaces.label,
     fontWeight: 400,
     fontSize: 12,
     lineHeight: 1,

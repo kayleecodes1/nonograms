@@ -30,7 +30,7 @@ BUGS
 [X] Fix linting errors
 [X] Fix console errors (mostly attribute names and React keys)
 [X] Refactor Cell to distinguish between guess and display state
-[ ] Refactor PuzzleContainer to use child slots
+[X] Refactor PuzzleContainer to use child slots
 [ ] Change global styles to use Styled Components, and implement Theme
 
 
