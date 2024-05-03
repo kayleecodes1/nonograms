@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { StyleSheetManager } from 'styled-components';
 import isPropValid from '@emotion/is-prop-valid';
+import App from '@components/App';
 import { GameStateProvider } from '@contexts/GameStateContext';
 import puzzles from '@data/puzzles';
 import GameState from '@models/GameState.ts';
@@ -10,7 +11,6 @@ import ThemeProvider from '@styles/ThemeProvider';
 import '@fontsource/roboto-mono/400.css';
 import '@fontsource/open-sans/400.css';
 import '@fontsource/open-sans/700.css';
-import App from './App.tsx';
 
 const gameState = new GameState(puzzles[0]);
 

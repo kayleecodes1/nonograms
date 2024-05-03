@@ -1,21 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import styled from 'styled-components';
 import InteractiveGrid, { InteractiveGridRef } from '@components/InteractiveGrid';
 import PuzzleContainer from '@components/PuzzleContainer';
 import { MouseButton, Orientation } from '@constants/index';
 import { useGameState } from '@contexts/GameStateContext';
-
-// TODO move row and column labels into MobX getter
-// TODO render labels with `solved` attribute
-
-const Main = styled.main({
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    alignItems: 'center',
-    gap: 32,
-    userSelect: 'none',
-});
+import { Root } from './App.styles';
 
 const App: React.FC = observer(() => {
     const gameState = useGameState();
@@ -30,10 +19,6 @@ const App: React.FC = observer(() => {
             document.removeEventListener('contextmenu', handleContextMenu);
         };
     }, []);
-
-    // const handleFill = (x: number, y: number, fillMode: FillMode): void => {
-    //     gameState.Puzzle.guess(x, y, fillMode === FillMode.Fill);
-    // };
 
     const handleInteract = (x: number, y: number, button: MouseButton) => {
         gameState.Puzzle.guess(x, y, button === MouseButton.Left);
@@ -57,7 +42,7 @@ const App: React.FC = observer(() => {
     }, []);
 
     return (
-        <Main>
+        <Root>
             <PuzzleContainer>
                 <PuzzleContainer.RowLabels>
                     {gameState.Puzzle.RowLabels.map((label, i) => (
@@ -95,7 +80,7 @@ const App: React.FC = observer(() => {
                     </InteractiveGrid>
                 </PuzzleContainer.Main>
             </PuzzleContainer>
-        </Main>
+        </Root>
     );
 });
 

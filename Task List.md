@@ -36,7 +36,7 @@ BUGS
 [X] Add puzzle complete event and audio
 [X] Implement Cell component
 [X] Refactor Grid component to focus solely on UI and interaction
-[ ] Move App to components folder
+[X] Move App to components folder
 [ ] Fix ref/child component typing on InteractiveGrid
 
 
