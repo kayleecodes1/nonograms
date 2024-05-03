@@ -21,6 +21,10 @@ class Grid<T> {
         return this._cells.length;
     }
 
+    public get Cells(): T[] {
+        return this._cells.flat();
+    }
+
     public getCell(x: number, y: number): T {
         return this._cells[y][x];
     }

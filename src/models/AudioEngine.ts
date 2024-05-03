@@ -3,6 +3,7 @@ import fillSrc from '@assets/audio/fill.wav';
 import flagSrc from '@assets/audio/flag.wav';
 import successSrc from '@assets/audio/success.wav';
 import toggleSrc from '@assets/audio/toggle.wav';
+import victorySrc from '@assets/audio/victory.wav';
 
 export class AudioEngine {
     private _audio: { [key in AudioEngine.Sound]: HTMLAudioElement } = {
@@ -11,6 +12,7 @@ export class AudioEngine {
         [AudioEngine.Sound.Flag]: new Audio(flagSrc),
         [AudioEngine.Sound.Success]: new Audio(successSrc),
         [AudioEngine.Sound.Toggle]: new Audio(toggleSrc),
+        [AudioEngine.Sound.Victory]: new Audio(victorySrc),
     };
 
     public playSound(sound: AudioEngine.Sound): void {
@@ -22,11 +24,12 @@ export class AudioEngine {
 
 export namespace AudioEngine {
     export enum Sound {
-        Error = 'Error',
-        Fill = 'Fill',
-        Flag = 'Flag',
-        Success = 'Success',
-        Toggle = 'Toggle',
+        Error = 'error',
+        Fill = 'fill',
+        Flag = 'flag',
+        Success = 'success',
+        Toggle = 'toggle',
+        Victory = 'victory',
     }
 }
 

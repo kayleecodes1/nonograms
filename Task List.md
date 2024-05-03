@@ -6,9 +6,10 @@ FEATURES
 
 REFACTOR
 
+cancelDrag
+animateLineComplete
+
 [ ] Refactor label calculation to abstract forward backward logic
-[ ] Implement cell component
-[ ] Separate Grid component and InteractiveGrid logic ?? maybe
 
 BUGS
 
@@ -31,7 +32,12 @@ BUGS
 [X] Fix console errors (mostly attribute names and React keys)
 [X] Refactor Cell to distinguish between guess and display state
 [X] Refactor PuzzleContainer to use child slots
-[ ] Change global styles to use Styled Components, and implement Theme
+[X] Change global styles to use Styled Components, and implement Theme
+[X] Add puzzle complete event and audio
+[X] Implement Cell component
+[X] Refactor Grid component to focus solely on UI and interaction
+[ ] Move App to components folder
+[ ] Fix ref/child component typing on InteractiveGrid
 
 
 // how to ensure naming doesn't conflict between models and components?

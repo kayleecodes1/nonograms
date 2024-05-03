@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import { Orientation } from '@constants/index';
 import Cell from '@models/Cell';
 import EventSystem from '@models/EventSystem';
 import Grid from '@models/Grid';
@@ -38,11 +39,18 @@ export class Puzzle {
         return this._grid.getColumns().map(Puzzle._getLabel);
     }
 
+    public get Cells(): Cell[] {
+        return this._grid.Cells;
+    }
+
+    public get IsSolved(): boolean {
+        return this._grid.Cells.every((cell) => cell.IsCorrect);
+    }
+
     public destroy(): void {
         this._eventSystem.clear();
     }
 
-    // TODO
     public guess(x: number, y: number, guess: boolean): void {
         const cell = this.Grid.getCell(x, y);
 
@@ -71,9 +79,9 @@ export class Puzzle {
         // If it is, fill any empty cells and emit event.
         const row = this._grid.getRow(y);
         const column = this._grid.getColumn(x);
-        const args: [Cell[], 'row' | 'column'][] = [
-            [row, 'row'],
-            [column, 'column'],
+        const args: [Cell[], Orientation][] = [
+            [row, Orientation.Horizontal],
+            [column, Orientation.Vertical],
         ];
         for (const [cells, orientation] of args) {
             const isSolved = cells.every((cell) => cell.IsCorrect);
@@ -83,6 +91,11 @@ export class Puzzle {
                 }
                 this._eventSystem.emit('lineComplete', x, y, orientation);
             }
+        }
+
+        // If the entire puzzle is solved, emit event.
+        if (this.IsSolved) {
+            this._eventSystem.emit('puzzleComplete');
         }
     }
 
@@ -177,7 +190,8 @@ export namespace Puzzle {
         fill: (x: number, y: number) => void;
         flag: (x: number, y: number) => void;
         error: (x: number, y: number) => void;
-        lineComplete: (x: number, y: number, orientation: 'row' | 'column') => void;
+        lineComplete: (x: number, y: number, orientation: Orientation) => void;
+        puzzleComplete: () => void;
     };
 }
 

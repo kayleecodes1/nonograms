@@ -2,12 +2,6 @@ import { makeAutoObservable } from 'mobx';
 import AudioEngine from './AudioEngine';
 import Puzzle from '@models/Puzzle';
 
-// TODO remove
-export enum FillMode {
-    Fill,
-    Flag,
-}
-
 class GameState {
     private _puzzle: Puzzle;
     private _audioEngine: AudioEngine;
@@ -37,6 +31,7 @@ class GameState {
         this.Puzzle.addListener('flag', createPlaySoundCallback(AudioEngine.Sound.Flag));
         this.Puzzle.addListener('error', createPlaySoundCallback(AudioEngine.Sound.Error));
         this.Puzzle.addListener('lineComplete', createPlaySoundCallback(AudioEngine.Sound.Success));
+        this.Puzzle.addListener('puzzleComplete', createPlaySoundCallback(AudioEngine.Sound.Victory));
     }
 }
 

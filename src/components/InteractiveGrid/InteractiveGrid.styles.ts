@@ -1,19 +1,12 @@
 import styled, { css, keyframes } from 'styled-components';
 import { Orientation } from '@constants/index';
 
+export const LINE_COMPLETE_DURATION = 800;
+
 export const Root = styled.svg({
     shapeRendering: 'crispEdges',
     vectorEffect: 'non-scaling-stroke',
 });
-
-export const Cell = styled.rect<{
-    isFilled: boolean;
-}>(({ isFilled }) => ({
-    fill: isFilled ? '#344861' : '#FFF',
-    stroke: isFilled ? '#18283F' : '#BDC6D5',
-    strokeWidth: 2,
-    strokeLinecap: 'square',
-}));
 
 export const SectionLine = styled.line({
     stroke: '#000',
@@ -38,6 +31,6 @@ export const LineComplete = styled.rect<{ orientation: Orientation }>(
         opacity: 1,
     }),
     css`
-        animation: ${({ orientation }) => completeAnimation(orientation)} 0.8s forwards;
+        animation: ${({ orientation }) => completeAnimation(orientation)} ${LINE_COMPLETE_DURATION}ms forwards;
     `,
 );
